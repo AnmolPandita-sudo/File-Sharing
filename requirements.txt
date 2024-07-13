@@ -18,4 +18,8 @@ aiohttp
 # --- For-env-variables ------- #
 python-dotenv
 
+
+# --- For-Other-Important-Stuff-Just-Install ------- #
 requests
+pdfkit
+reportlab

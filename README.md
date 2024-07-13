@@ -40,6 +40,22 @@
     <strong>Happy Coding!</strong>
 </div>
 
+
+################ ___________Just to check the data inside your mongo db users who are using your bot just put it inside your code ___________################
+# import pymongo
+# from config import DB_URL, DB_NAME
+# import database.database
+
+# dbclient = pymongo.MongoClient(DB_URL)
+# database = dbclient[DB_NAME]
+# user_data = database['user_data']
+
+# # Fetch and print a sample document
+# sample_doc = user_data.find_one()
+# print(sample_doc)
+
+
+
 ### CONFIGS VARIABLES FOR DEPLOYMENT
 
 * `API_HASH` Your API Hash from my.telegram.org

@@ -1,3 +1,6 @@
+from config import ADMINS
+from pyrogram.types import Message
+from pyrogram import Client, filters
 import os
 import asyncio
 from pyrogram import Client, filters, __version__
@@ -8,11 +11,30 @@ from bot import Bot
 from config import ADMINS, FORCE_MSG, START_MSG, CUSTOM_CAPTION, DISABLE_CHANNEL_BUTTON, PROTECT_CONTENT
 from helper_func import subscribed, decode, get_messages
 from database.database import add_user, present_user, del_user, full_userbase
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table
+from io import BytesIO
 
 # Add time in seconds for waiting before deleting
 SECONDS = int(os.getenv("SECONDS", "600"))
 
-# Start command handler
+
+#
+##
+###
+####
+#####
+######
+#######
+######## ---------------           START COMMAND WITH OR WITHOUT LINK            ---------------########
+#######
+######
+#####
+####
+###
+##
+#
 
 
 @Bot.on_message(filters.command('start') & filters.private & subscribed)
@@ -25,6 +47,8 @@ async def start_command(client: Client, message: Message):
             await add_user(user_id)
         except:
             pass
+
+    text = message.text
 
     text = message.text
 
@@ -60,7 +84,13 @@ async def start_command(client: Client, message: Message):
             return
 
     else:
-        # No command with arguments, handle the 'else' block
+        #####
+        ######
+        #######
+        ######## ---------------           START COMMAND WITHOUT LINK            ---------------########
+        #######
+        ######
+        #####
         reply_markup = InlineKeyboardMarkup(
             [
                 [
@@ -85,7 +115,13 @@ async def start_command(client: Client, message: Message):
         )
         return
 
-    # Notify user that content is being prepared
+    #####
+    ######
+    #######
+    ######## ---------------           START COMMAND WITH LINK            ---------------########
+    #######
+    ######
+    #####
     temp_msg = await message.reply("!! ᴄᴏɴᴛᴇɴᴛ ᴠᴇᴛᴛɪɴɢ !!")
 
     try:
@@ -100,7 +136,7 @@ async def start_command(client: Client, message: Message):
         sent_msg = await message.reply_text("ɴɪɢɢᴀ ʏᴏᴜ ʟᴀᴛᴇ. ɢᴇᴛ ʏᴏᴜʀ ᴀss ɪɴ ʜᴇʀᴇ ɪɴ ᴛɪᴍᴇ")
 
         # Auto delete the message after 7 seconds
-        await asyncio.sleep(7)
+        await asyncio.sleep(10)
         try:
             await sent_msg.delete()
         except Exception as e:
@@ -108,8 +144,14 @@ async def start_command(client: Client, message: Message):
 
         return
 
-    # Delete the temporary message before sharing files
-    await temp_msg.delete()
+    # Wait for 3 seconds before sending files
+    await asyncio.sleep(3)
+    await temp_msg.edit_text("!!!!   ꜱᴇɴᴅɪɴɢ ꜰɪʟᴇꜱ   !!!!")
+    await asyncio.sleep(1)
+
+    # Check if temp_msg still exists before deleting
+    if temp_msg:
+        await temp_msg.delete()
 
     sent_messages = []
     found_files = False
@@ -198,11 +240,19 @@ async def start_command(client: Client, message: Message):
 
 
 # =====================================================================================##
+# =====================================================================================##
+# =====================================================================================##
+# =====================================================================================##
+# =====================================================================================##
 
 WAIT_MSG = """"<b>Processing ...</b>"""
 
 REPLY_ERROR = """<code>Use this command as a replay to any telegram message without any spaces.</code>"""
 
+# =====================================================================================##
+# =====================================================================================##
+# =====================================================================================##
+# =====================================================================================##
 # =====================================================================================##
 
 
@@ -241,17 +291,97 @@ async def not_joined(client: Client, message: Message):
         disable_web_page_preview=True
     )
 
+#
+##
+###
+####
+#####
+######
+#######
 ######## ---------------            USERS USING BOT COMMAND            ---------------########
+#######
+######
+#####
+####
+###
+##
+#
 
 
 @Bot.on_message(filters.command('users') & filters.private & filters.user(ADMINS))
 async def get_users(client: Bot, message: Message):
-    msg = await client.send_message(chat_id=message.chat.id, text=WAIT_MSG)
+    # Sending initial message
+    msg = await client.send_message(chat_id=message.chat.id, text="ꜰᴇᴛᴄʜɪɴɢ ᴜꜱᴇʀ ᴅᴀᴛᴀ...")
+
+    # Fetch user data
     users = await full_userbase()
-    await msg.edit(f"{len(users)} users are using this bot")
+    num_users = len(users)
+
+    # Prepare PDF content
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=letter)
+    styles = getSampleStyleSheet()
+
+    elements = []
+    elements.append(
+        Paragraph(f"{num_users} ᴜꜱᴇʀꜱ ᴀʀᴇ ᴜꜱɪɴɢ ᴛʜɪꜱ ʙᴏᴛ.", styles['Heading1']))
+    elements.append(Spacer(1, 12))
+
+    # Prepare table data
+    data = [['User ID', 'Username', 'First Name', 'Last Name']]
+    for user in users:
+        data.append([user['id'], user.get('username', ''), user.get(
+            'first_name', ''), user.get('last_name', '')])
+
+    # Build table
+    table_style = [('GRID', (0, 0), (-1, -1), 1, (0, 0, 0))]
+    elements.append(Spacer(1, 12))
+    elements.append(Paragraph("User Data:", styles['Heading2']))
+    elements.append(Spacer(1, 6))
+
+    tbl = Table(data, style=table_style)
+    elements.append(tbl)
+
+    # Build PDF document
+    doc.build(elements)
+
+    # Save PDF to a file
+    pdf_file = "User Data.pdf"
+    with open(pdf_file, "wb") as file:
+        file.write(buffer.getvalue())
+
+    # Send message with user count and send the PDF file
+    await msg.edit(f"{len(users)} ᴜꜱᴇʀꜱ ᴀʀᴇ ᴜꜱɪɴɢ ᴛʜɪꜱ ʙᴏᴛ.")
+
+    # Send the PDF file as a document
+    sent_message = await client.send_document(chat_id=message.chat.id, document=pdf_file, caption="ʜᴇʀᴇ ɪꜱ ᴛʜᴇ ᴜꜱᴇʀ ᴅᴀᴛᴀ.")
+
+    # Auto delete the sent PDF message and PDF file from the system after 10 seconds
+    await asyncio.sleep(7)
+    try:
+        await sent_message.delete()
+        os.remove(pdf_file)
+    except Exception as e:
+        print(f"Error deleting message: {e}")
 
 
+#
+##
+###
+####
+#####
+######
+#######
 ######## ---------------            BROADCAST COMMAND(with BUTTONS)            ---------------########
+#######
+######
+#####
+####
+###
+##
+#
+
+
 @Bot.on_message(filters.private & filters.command('broadcast') & filters.user(ADMINS))
 async def send_text(client: Bot, message: Message):
     if message.reply_to_message:
