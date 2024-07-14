@@ -1,4 +1,4 @@
-from config import ADMINS
+from config import ADMINS, OWNER_ID
 from pyrogram.types import Message
 from pyrogram import Client, filters
 import os
@@ -10,7 +10,7 @@ from pyrogram.errors import FloodWait, UserIsBlocked, InputUserDeactivated
 from bot import Bot
 from config import ADMINS, FORCE_MSG, START_MSG, CUSTOM_CAPTION, DISABLE_CHANNEL_BUTTON, PROTECT_CONTENT
 from helper_func import subscribed, decode, get_messages
-from database.database import add_user, present_user, del_user, full_userbase
+from database.database import add_user, present_user, del_user, full_userbase, user_data
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table
@@ -40,13 +40,16 @@ SECONDS = int(os.getenv("SECONDS", "600"))
 @Bot.on_message(filters.command('start') & filters.private & subscribed)
 async def start_command(client: Client, message: Message):
     user_id = message.from_user.id
+    username = message.from_user.username
+    first_name = message.from_user.first_name
+    last_name = message.from_user.last_name  # Access last name
 
     # Add user to database if not present
-    if not await present_user(user_id):
+    if not await present_user(user_id, username, first_name, last_name):
         try:
-            await add_user(user_id)
-        except:
-            pass
+            await add_user(user_id, username, first_name, last_name)
+        except Exception as e:
+            print(f"Error adding user: {e}")
 
     text = message.text
 
@@ -267,11 +270,12 @@ async def not_joined(client: Client, message: Message):
     ]
 
     try:
+        url = f"https://t.me/{client.username}?start={message.command[1]}"
         buttons.append(
             [
                 InlineKeyboardButton(
                     text='• ɴᴏᴡ ᴄʟɪᴄᴋ ʜᴇʀᴇ •',
-                    url=f"https://t.me/{client.username}?start={message.command[1]}"
+                    url=url
                 )
             ]
         )
@@ -310,60 +314,69 @@ async def not_joined(client: Client, message: Message):
 
 @Bot.on_message(filters.command('users') & filters.private & filters.user(ADMINS))
 async def get_users(client: Bot, message: Message):
-    # Sending initial message
-    msg = await client.send_message(chat_id=message.chat.id, text="ꜰᴇᴛᴄʜɪɴɢ ᴜꜱᴇʀ ᴅᴀᴛᴀ...")
-
-    # Fetch user data
-    users = await full_userbase()
-    num_users = len(users)
-
-    # Prepare PDF content
-    buffer = BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=letter)
-    styles = getSampleStyleSheet()
-
-    elements = []
-    elements.append(
-        Paragraph(f"{num_users} ᴜꜱᴇʀꜱ ᴀʀᴇ ᴜꜱɪɴɢ ᴛʜɪꜱ ʙᴏᴛ.", styles['Heading1']))
-    elements.append(Spacer(1, 12))
-
-    # Prepare table data
-    data = [['User ID', 'Username', 'First Name', 'Last Name']]
-    for user in users:
-        data.append([user['id'], user.get('username', ''), user.get(
-            'first_name', ''), user.get('last_name', '')])
-
-    # Build table
-    table_style = [('GRID', (0, 0), (-1, -1), 1, (0, 0, 0))]
-    elements.append(Spacer(1, 12))
-    elements.append(Paragraph("User Data:", styles['Heading2']))
-    elements.append(Spacer(1, 6))
-
-    tbl = Table(data, style=table_style)
-    elements.append(tbl)
-
-    # Build PDF document
-    doc.build(elements)
-
-    # Save PDF to a file
-    pdf_file = "User Data.pdf"
-    with open(pdf_file, "wb") as file:
-        file.write(buffer.getvalue())
-
-    # Send message with user count and send the PDF file
-    await msg.edit(f"{len(users)} ᴜꜱᴇʀꜱ ᴀʀᴇ ᴜꜱɪɴɢ ᴛʜɪꜱ ʙᴏᴛ.")
-
-    # Send the PDF file as a document
-    sent_message = await client.send_document(chat_id=message.chat.id, document=pdf_file, caption="ʜᴇʀᴇ ɪꜱ ᴛʜᴇ ᴜꜱᴇʀ ᴅᴀᴛᴀ.")
-
-    # Auto delete the sent PDF message and PDF file from the system after 10 seconds
-    await asyncio.sleep(7)
     try:
-        await sent_message.delete()
-        os.remove(pdf_file)
-    except Exception as e:
-        print(f"Error deleting message: {e}")
+        # Sending initial message
+        msg = await client.send_message(chat_id=message.chat.id, text="Fetching user data...")
 
+        # Fetch user data
+        users = await full_userbase()
+        num_users = len(users)
+
+        # Prepare PDF content
+        buffer = BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=letter)
+        styles = getSampleStyleSheet()
+
+        elements = []
+
+       # Centered heading 1
+        heading_text = f"{num_users} USERS ARE USING THE BOT"
+        centered_heading = Paragraph(heading_text, styles['Heading1'])
+        centered_heading.alignment = 1  # 0=left, 1=center, 2=right
+        elements.append(centered_heading)
+
+        # Centered heading 2
+        centered_heading2 = Paragraph("USER DATA : ", styles['Heading2'])
+        centered_heading2.alignment = 1  # 0=left, 1=center, 2=right
+        elements.append(centered_heading2)
+        elements.append(Spacer(1, 6))
+
+        # Prepare table data
+        data = [['USER ID', 'USERNAME', 'FIRST  NAME', 'LAST  NAME']]
+        for user in users:
+            data.append([user['_id'], user.get('username', ''), user.get(
+                'first_name', ''), user.get('last_name', '')])
+
+        # Build table
+        table_style = [('GRID', (0, 0), (-1, -1), 2, (0, 0, 0)),
+                       ('BACKGROUND', (0, 0), (-1, -1), (240/255, 240/255, 240/255))]
+        tbl = Table(data, style=table_style)
+        elements.append(tbl)
+
+        # Build PDF document
+        doc.build(elements)
+
+        # Save PDF to a file
+        pdf_file = "User_Data.pdf"
+        with open(pdf_file, "wb") as file:
+            file.write(buffer.getvalue())
+
+        # Send message with user count and send the PDF file
+        await msg.edit(f"{num_users} ᴜꜱᴇʀꜱ ᴀʀᴇ ᴜꜱɪɴɢ ᴛʜɪꜱ ʙᴏᴛ.")
+
+        # Send the PDF file as a document
+        sent_message = await client.send_document(chat_id=message.chat.id, document=pdf_file, caption="ʜᴇʀᴇ ɪꜱ ᴛʜᴇ ᴜꜱᴇʀ ᴅᴀᴛᴀ.")
+
+        # Auto delete the sent PDF message and PDF file from the system after 10 seconds
+        await asyncio.sleep(10)
+        try:
+            await sent_message.delete()
+            os.remove(pdf_file)
+        except Exception as e:
+            print(f"Error deleting message: {e}")
+
+    except Exception as e:
+        print(f"Error fetching or sending user data: {e}")
 
 #
 ##
@@ -385,88 +398,50 @@ async def get_users(client: Bot, message: Message):
 @Bot.on_message(filters.private & filters.command('broadcast') & filters.user(ADMINS))
 async def send_text(client: Bot, message: Message):
     if message.reply_to_message:
-        # Retrieve user base to broadcast messages to
-        query = await full_userbase()
-
-        # Get the message to be broadcasted
-        broadcast_msg = message.reply_to_message
-
-        # Initialize counters for statistics
-        total = 0
-        successful = 0
-        blocked = 0
-        deleted = 0
-        unsuccessful = 0
-
-        # Ask for buttons (optional)
         try:
-            buttons_message = await client.ask(
-                text="Please send the button text and URL in this format: \nButtonText1:URL1 \nButtonText2:URL2\n\nOr type 'skip' to skip adding buttons.",
-                chat_id=message.from_user.id,
-                timeout=600
-            )
-        except asyncio.TimeoutError:
-            await message.reply("⏳ Time ran out. Proceeding without adding buttons.")
-            buttons_message = None
+            user_docs = await full_userbase()
+            user_ids = [user['_id']
+                        for user in user_docs if user['_id'] != OWNER_ID]
+            broadcast_msg = message.reply_to_message
+            total = 0
+            successful = 0
+            blocked = 0
+            deleted = 0
+            unsuccessful = 0
 
-        buttons = []
-        if buttons_message and buttons_message.text.strip().lower() != 'skip':
-            # Parse button text and URLs
-            button_pairs = buttons_message.text.split(',')
-            for pair in button_pairs:
-                # Split once to handle cases where URLs contain ':'
-                parts = pair.split(':', 1)
-                if len(parts) == 2:
-                    text, url = parts
-                    buttons.append(
-                        [InlineKeyboardButton(text.strip(), url=url.strip())])
+            pls_wait = await message.reply("<i>Broadcasting Message.. This will Take Some Time</i>")
+            for user_id in user_ids:
+                try:
+                    await broadcast_msg.copy(user_id)
+                    successful += 1
+                except FloodWait as e:
+                    await asyncio.sleep(e.x)
+                    await broadcast_msg.copy(user_id)
+                    successful += 1
+                except UserIsBlocked:
+                    await del_user(user_id)
+                    blocked += 1
+                except InputUserDeactivated:
+                    await del_user(user_id)
+                    deleted += 1
+                except:
+                    unsuccessful += 1
+                    pass
+                total += 1
 
-        # Prepare reply markup with buttons
-        reply_markup = InlineKeyboardMarkup(buttons) if buttons else None
+            status = f"""<b><u>Broadcast Completed</u>
 
-        # Notify users about the broadcasting process
-        pls_wait = await message.reply("<i>Broadcasting Message.. This will Take Some Time</i>", reply_markup=reply_markup)
+    Total Users: <code>{total}</code>
+    Successful: <code>{successful}</code>
+    Blocked Users: <code>{blocked}</code>
+    Deleted Accounts: <code>{deleted}</code>
+    Unsuccessful: <code>{unsuccessful}</code></b>"""
 
-        # Iterate over each user and attempt to send the broadcast message
-        for chat_id in query:
-            try:
-                # Send message with buttons
-                await broadcast_msg.copy(chat_id, reply_markup=reply_markup)
-                successful += 1
-            except FloodWait as e:
-                # Handle FloodWait exceptions by waiting and retrying
-                await asyncio.sleep(e.x)
-                await broadcast_msg.copy(chat_id, reply_markup=reply_markup)
-                successful += 1
-            except UserIsBlocked:
-                # Handle blocked users by removing them from the user base
-                await del_user(chat_id)
-                blocked += 1
-            except InputUserDeactivated:
-                # Handle deactivated accounts by removing them from the user base
-                await del_user(chat_id)
-                deleted += 1
-            except Exception as ex:
-                # Handle other exceptions (unsuccessful attempts)
-                unsuccessful += 1
-                print(f"Failed to broadcast to {chat_id}: {ex}")
-
-            # Increment total users counter
-            total += 1
-
-        # Format and edit the initial "Please wait" message to show broadcast statistics
-        status = f"""<b><u>Broadcast Completed</u></b>
-
-<b>Total Users:</b> <code>{total}</code>
-<b>Successful:</b> <code>{successful}</code>
-<b>Blocked Users:</b> <code>{blocked}</code>
-<b>Deleted Accounts:</b> <code>{deleted}</code>
-<b>Unsuccessful:</b> <code>{unsuccessful}</code>"""
-
-        await pls_wait.edit(status)
+            await pls_wait.edit(status)
+        except:
+            pass
 
     else:
-        # If not used as a reply, reply with an error message after a delay
         msg = await message.reply(REPLY_ERROR)
         await asyncio.sleep(8)
         await msg.delete()

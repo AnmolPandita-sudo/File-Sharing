@@ -41,20 +41,22 @@
 </div>
 
 
-################ ___________Just to check the data inside your mongo db users who are using your bot just put it inside your code ___________################
-# import pymongo
-# from config import DB_URL, DB_NAME
-# import database.database
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+***Just to check the data inside your mongo db users who are using your bot just put it inside your code ***
 
-# dbclient = pymongo.MongoClient(DB_URL)
-# database = dbclient[DB_NAME]
-# user_data = database['user_data']
+* import pymongo
+* from config import DB_URL, DB_NAME
+* import database.database
 
-# # Fetch and print a sample document
-# sample_doc = user_data.find_one()
-# print(sample_doc)
+* dbclient = pymongo.MongoClient(DB_URL)
+* database = dbclient[DB_NAME]
+* user_data = database['user_data']
 
+* Fetch and print a sample document
+* sample_doc = user_data.find_one()
+* print(sample_doc)
 
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ### CONFIGS VARIABLES FOR DEPLOYMENT
 
@@ -62,7 +64,7 @@
 * `APP_ID` Your API ID from my.telegram.org
 * `TG_BOT_TOKEN` Your bot token from @BotFather
 * `OWNER_ID` Must enter Your Telegram Id
-* `CHANNEL_ID` Your Channel ID eg:- -100xxxxxxxx
+* `CHANNEL_ID` Your Channel ID eg:- -10xxxxxxxxx
 * `DB_URL` Your mongo db url
 * `DB_NAME` Your mongo db session name
 * `ADMINS` Optional: A space separated list of user_ids of Admins, they can only create links
@@ -95,18 +97,26 @@ If you need assistance or have any questions, you can contact the admin of this 
 
 ### DEPLOYEMENT SUPPORT
 
-<summary>Deploy To Koyeb</summary>
+<summary>Deploy To Railway (Best alternative to Heroku as it gives 500 hours free)</summary>
+<p>
+<br>
+<a target="_blank" href="https://railway.app?referralCode=CoyZdL">
+  <img src="https://railway.app/button.svg" alt="Deploy">
+</a>
+</p>
+
+<summary>Deploy To Koyeb (Good alternative to heroku but sometimes it gets down)</summary>
 <p>
 <br>                 
-<a target="/blank" href="https://app.koyeb.com/deploy?type=git&repository=github.com/JishuDeveloper/File-Sharing-Premium-Bot&branch=main&name=file-sharing-bot" >
+<a target="/blank" href="https://app.koyeb.com/" >
   <img src="https://www.koyeb.com/static/images/deploy/button.svg" alt="Deploy">
 </a>
 </p>
 
-<summary>Deploy To Heroku</summary>
+<summary>Deploy To Heroku (Best deployment platform but you'll need a credit card to start with) </summary>
 <p>
 <br>
-<a href="https://heroku.com/deploy?template=https://github.com/JishuDeveloper/File-Sharing-Premium-Bot">
+<a href="https://heroku.com/">
   <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy">
 </a>
 </p>
@@ -157,7 +167,7 @@ Bot Command Descriptions:
 start - Start the bot or get posts.
 batch - Create a link for more than one post.
 genlink - Create a link for one post.
-customBatch - Create a link for a custom batch of posts.
+custom_batch - Create a link for a custom batch of posts.
 users - View bot statistics.
 broadcast - Broadcast any message to bot users.
 stats - Check the bot uptime.
