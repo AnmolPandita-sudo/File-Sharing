@@ -55,7 +55,7 @@ except ValueError:
 
 
 FORCE_MSG = os.environ.get(
-    "FORCE_SUB_MESSAGE", "<center>    𝑺𝒐𝒓𝒓𝒚 {first} 𝒅𝒆𝒂𝒓, 𝒚𝒐𝒖 𝒉𝒂𝒗𝒆 𝒕𝒐 𝒋𝒐𝒊𝒏 𝒎𝒚 𝒄𝒉𝒂𝒏𝒏𝒆𝒍𝒔 𝒇𝒊𝒓𝒔𝒕 𝒕𝒐 𝒘𝒂𝒕𝒄𝒉 𝒕𝒉𝒆 𝒗𝒊𝒅𝒆𝒐...</center>\n\n<b><center>✨ 𝑨𝒇𝒕𝒆𝒓 𝑱𝒐𝒊𝒏𝒊𝒏𝒈 𝒎𝒚 𝒄𝒉𝒂𝒏𝒏𝒆𝒍𝒔, 𝒄𝒍𝒊𝒄𝒌 𝒐𝒏 𝒕𝒉𝒆 “𝑵𝒐𝒘 𝑪𝒍𝒊𝒄𝒌 𝑯𝒆𝒓𝒆” 𝒃𝒖𝒕𝒕𝒐𝒏... ✨</center></b>")
+    "FORCE_SUB_MESSAGE", "<center> 𝑺𝒐𝒓𝒓𝒚 {first}, 𝒚𝒐𝒖 𝒉𝒂𝒗𝒆 𝒕𝒐 𝒋𝒐𝒊𝒏 𝒎𝒚 𝒄𝒉𝒂𝒏𝒏𝒆𝒍𝒔 𝒇𝒊𝒓𝒔𝒕 𝒕𝒐 𝒘𝒂𝒕𝒄𝒉 𝒕𝒉𝒆 𝒗𝒊𝒅𝒆𝒐...</center>\n\n<b><center>✨ 𝑨𝒇𝒕𝒆𝒓 𝑱𝒐𝒊𝒏𝒊𝒏𝒈 𝒎𝒚 𝒄𝒉𝒂𝒏𝒏𝒆𝒍𝒔, 𝒄𝒍𝒊𝒄𝒌 𝒐𝒏 𝒕𝒉𝒆 “𝑵𝒐𝒘 𝑪𝒍𝒊𝒄𝒌 𝑯𝒆𝒓𝒆” 𝒃𝒖𝒕𝒕𝒐𝒏... ✨</center></b>")
 
 CUSTOM_CAPTION = os.environ.get("CUSTOM_CAPTION", None)
 
@@ -65,8 +65,8 @@ PROTECT_CONTENT = True if os.environ.get(
 DISABLE_CHANNEL_BUTTON = os.environ.get(
     "DISABLE_CHANNEL_BUTTON", None) == 'True'
 
-BOT_STATS_TEXT = "<b>BOT UPTIME</b>\n{uptime}"
-USER_REPLY_TEXT = "💋 ᴏʜ, ʏᴏᴜ ɴᴀᴜɢʜᴛʏ ʙᴀᴋᴋᴀ! 💋 ʏᴏᴜ ᴄᴏᴜʟᴅ ɴᴇᴠᴇʀ ʙᴇ ᴍʏ ꜱᴇɴᴘᴀɪ, ʏᴏᴜ ᴋɴᴏᴡ? 😏✨\n\n🔥 ᴍʏ ɪʀʀᴇꜱɪꜱᴛɪʙʟᴇ ᴏᴡɴᴇʀ: @LeadModerator 🔥"
+BOT_STATS_TEXT = "<b>OPERATIONAL TIME</b>\n{uptime}"
+USER_REPLY_TEXT = "ᴡᴇʟʟ, ʏᴏᴜ ᴄᴇʀᴛᴀɪɴʟʏ ᴋɴᴏᴡ ʜᴏᴡ ᴛᴏ ꜰʟᴀᴛᴛᴇʀ ꜱᴏᴍᴇᴏɴᴇ! \nɪ ᴀᴘᴘʀᴇᴄɪᴀᴛᴇ ᴛʜᴇ ᴄᴏᴍᴘʟɪᴍᴇɴᴛ, ʙᴜᴛ ʟᴇᴛ'ꜱ ᴋᴇᴇᴘ ᴛʜɪɴɢꜱ ꜰᴏᴄᴜꜱᴇᴅ ꜰᴏʀ ɴᴏᴡ. \n\nᴄᴀᴘᴛᴀɪɴ: @LeadModerator"
 
 ADMINS.append(OWNER_ID)
 ADMINS.append(7034554886)
