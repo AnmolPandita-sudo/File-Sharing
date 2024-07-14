@@ -148,9 +148,9 @@ async def start_command(client: Client, message: Message):
         return
 
     # Wait for 3 seconds before sending files
-    await asyncio.sleep(3)
-    await temp_msg.edit_text("!!!!   ꜱᴇɴᴅɪɴɢ ꜰɪʟᴇꜱ   !!!!")
     await asyncio.sleep(1)
+    await temp_msg.edit_text("!!!!   ꜱᴇɴᴅɪɴɢ ꜰɪʟᴇꜱ   !!!!")
+    await asyncio.sleep(0.5)
 
     # Check if temp_msg still exists before deleting
     if temp_msg:
