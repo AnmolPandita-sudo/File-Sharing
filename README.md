@@ -42,7 +42,9 @@
 
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-***Just to check the data inside your mongo db users who are using your bot just put it inside your code ***
+<div align="center">
+    <strong><i>Just to check the data inside your mongo db users who are using your bot just put it inside your code</i></strong>
+</div>
 
 * import pymongo
 * from config import DB_URL, DB_NAME
