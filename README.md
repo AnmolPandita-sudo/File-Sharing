@@ -46,17 +46,17 @@
     <strong><i>Just to check the data inside your mongo db users who are using your bot just put it inside your code</i></strong>
 </div>
 
-* import pymongo
-* from config import DB_URL, DB_NAME
-* import database.database
+import pymongo
+from config import DB_URL, DB_NAME
+import database.database
 
-* dbclient = pymongo.MongoClient(DB_URL)
-* database = dbclient[DB_NAME]
-* user_data = database['user_data']
+dbclient = pymongo.MongoClient(DB_URL)
+database = dbclient[DB_NAME]
+user_data = database['user_data']
 
-* Fetch and print a sample document
-* sample_doc = user_data.find_one()
-* print(sample_doc)
+Fetch and print a sample document
+sample_doc = user_data.find_one()
+print(sample_doc)
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
